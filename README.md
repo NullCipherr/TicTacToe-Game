@@ -1,7 +1,9 @@
 ### 🎮 TicTacToe-Game
 
+---
+
 #### Visão Geral
-O repositório **TicTacToe-Game** contém um jogo clássico de Jogo da Velha (Tic-Tac-Toe) desenvolvido utilizando HTML, JavaScript e CSS. Este projeto é ideal para aqueles que desejam aprender ou praticar desenvolvimento web, oferecendo uma base sólida para entender a interação entre essas três tecnologias fundamentais.
+Esse repositório contém um jogo clássico de Jogo da Velha (Tic-Tac-Toe) desenvolvido utilizando HTML, JavaScript e CSS. Este projeto é ideal para aqueles que desejam aprender ou praticar desenvolvimento web, oferecendo uma base sólida para entender a interação entre essas três tecnologias fundamentais.
 
 #### Estrutura do Repositório
 - **HTML** 📄: Define a estrutura básica do jogo, incluindo o layout do tabuleiro e os elementos de interface do usuário.
