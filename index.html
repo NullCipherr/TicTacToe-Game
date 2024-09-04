@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicTacToe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <style>
+        :root {
+            --bg-color-1: #800080;
+            --bg-color-2: #4B0082;
+            --text-color: #fff;
+            --primary-color: #9370DB;
+            --secondary-color: #8A2BE2;
+            --cell-bg: #2a2a2a;
+            --menu-bg: rgba(255, 255, 255, 0.1);
+            --menu-hover: rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes highlight {
+            0% { box-shadow: 0 0 0 0 rgba(30, 255, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--primary-color), var(--secondary-color));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow-y: hidden;
+        }
+
+        #menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 10px 0;
+            background-color: var(--menu-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        #logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        #logo i {
+            font-size: 24px;
+        }
+
+        #options {
+            display: flex;
+            gap: 10px;
+            margin-right: 20px;
+        }
+
+        .menu-item {
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .menu-item:hover {
+            background-color: var(--menu-hover);
+            transform: scale(1.05);
+        }
+
+        .menu-item i {
+            font-size: 14px;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        #game-window {
+            width: 300px;
+            height: 300px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .cell {
+            background-color: var(--cell-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            cursor: pointer;
+            color: var(--primary-color);
+            aspect-ratio: 1 / 1;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .cell:hover {
+            transform: scale(0.95);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cell.win {
+            animation: highlight 1s infinite;
+        }
+
+        .cell-content {
+            display: inline-block;
+            animation: pulse 0.3s ease-out;
+        }
+
+        #status {
+            position: absolute;
+            top: -70px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-weight: bold;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 20px;
+            white-space: nowrap;
+            animation: fadeIn 0.3s;
+            transition: all 0.3s;
+        }
+
+        .swal2-popup {
+            background-color: var(--menu-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .swal2-title, .swal2-html-container {
+            color: var(--text-color) !important;
+        }
+
+        .swal2-confirm {
+            background-color: var(--primary-color) !important;
+        }
+
+        .swal2-confirm:focus {
+            box-shadow: 0 0 0 3px var(--secondary-color) !important;
+        }
+
+        .swal2-html-container ul {
+            text-align: left;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .swal2-html-container li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <div id="logo">
+            <i class="fas fa-gamepad"></i>
+            TicTacToe
+        </div>
+        <div id="options">
+            <div class="menu-item" onclick="newGame('1v1')">
+                <i class="fas fa-user-friends"></i>
+                1v1
+            </div>
+            <div class="menu-item" onclick="newGame('ai')">
+                <i class="fas fa-robot"></i>
+                vs IA
+            </div>
+            <div class="menu-item" onclick="showRules()">
+                <i class="fas fa-book"></i>
+                Regras
+            </div>
+        </div>
+    </div>
+    <div id="game-container">
+        <div id="status"></div>
+        <div id="game-window">
+            <div class="cell" onclick="makeMove(0)"></div>
+            <div class="cell" onclick="makeMove(1)"></div>
+            <div class="cell" onclick="makeMove(2)"></div>
+            <div class="cell" onclick="makeMove(3)"></div>
+            <div class="cell" onclick="makeMove(4)"></div>
+            <div class="cell" onclick="makeMove(5)"></div>
+            <div class="cell" onclick="makeMove(6)"></div>
+            <div class="cell" onclick="makeMove(7)"></div>
+            <div class="cell" onclick="makeMove(8)"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <script>
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = false;
+        let gameMode = '';
+
+        function newGame(mode) {
+            gameMode = mode;
+            gameActive = true;
+            currentPlayer = 'X';
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            document.querySelectorAll('.cell').forEach(cell => cell.textContent = '');
+            updateStatus(`Vez do jogador ${currentPlayer}`);
+        }
+
+        function showRules() {
+            Swal.fire({
+                title: 'Regras do Jogo da Velha',
+                html: `
+                    <ul>
+                        <li>O jogo é jogado em um tabuleiro 3x3.</li>
+                        <li>Dois jogadores alternam turnos, marcando X ou O.</li>
+                        <li>O primeiro a alinhar três símbolos iguais (horizontal, vertical ou diagonal) vence.</li>
+                        <li>Se todas as células forem preenchidas e ninguém vencer, o jogo termina em empate.</li>
+                    </ul>
+                `,
+                confirmButtonText: 'Fechar',
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    htmlContainer: 'swal2-html-container',
+                    confirmButton: 'swal2-confirm'
+                },
+                background: 'rgba(0, 0, 0, 0.8)',
+                backdrop: 'rgba(0, 0, 0, 0.4)'
+            });
+        }
+
+        function makeMove(cellIndex) {
+            if (!gameActive || gameBoard[cellIndex] !== '') return;
+
+            gameBoard[cellIndex] = currentPlayer;
+            const cell = document.querySelectorAll('.cell')[cellIndex];
+            cell.innerHTML = `<span class="cell-content">${currentPlayer}</span>`;
+
+            if (checkWin()) {
+                gameActive = false;
+                updateStatus(`Jogador ${currentPlayer} venceu!`);
+                highlightWinningCells();
+            } else if (gameBoard.every(cell => cell !== '')) {
+                gameActive = false;
+                updateStatus("Empate!");
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                updateStatus(`Vez do jogador ${currentPlayer}`);
+
+                if (gameMode === 'ai' && currentPlayer === 'O') {
+                    setTimeout(makeAIMove, 500);
+                }
+            }
+        }
+
+        function makeAIMove() {
+            let availableMoves = gameBoard.reduce((acc, cell, index) => {
+                if (cell === '') acc.push(index);
+                return acc;
+            }, []);
+
+            let randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+            makeMove(randomMove);
+        }
+
+        function checkWin() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Linhas
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colunas
+                [0, 4, 8], [2, 4, 6] // Diagonais
+            ];
+
+            return winPatterns.some(pattern => {
+                return pattern.every(index => gameBoard[index] === currentPlayer);
+            });
+        }
+
+        function highlightWinningCells() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Linhas
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colunas
+                [0, 4, 8], [2, 4, 6] // Diagonais
+            ];
+
+            for (let pattern of winPatterns) {
+                if (pattern.every(index => gameBoard[index] === currentPlayer)) {
+                    pattern.forEach(index => {
+                        document.querySelectorAll('.cell')[index].classList.add('win');
+                    });
+                    break;
+                }
+            }
+        }
+
+        function updateStatus(message) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.style.animation = 'none';
+            setTimeout(() => {
+                statusElement.style.animation = 'fadeIn 0.3s';
+            }, 10);
+        }
+    </script>
+</body>
+</html>
